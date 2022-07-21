@@ -95,7 +95,7 @@
         let number = (currentPage * limit) + 1
         for (const user of data) {
             tableUser.innerHTML += `
-                <tr class="border-b border-slate-500">
+                <tr class="border-b border-sky-500">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${number} </td>
                     <td class="text-sm font-light px-6 py-4">
                         ${user.name}
@@ -105,11 +105,11 @@
                     </td>
                     <td class="text-sm font-light px-6 py-4 whitespace-nowrap">
                         <a href="" data-id="${user._id}" data-uid="${user.uid}" data-name="${user.name}"
-                            class="w-full mx-1 bg-slate-700 p-3 rounded-lg text-white hover:bg-yellow-500 user-change"
+                            class="w-full mx-1 bg-sky-700 p-3 rounded-lg text-white hover:bg-yellow-500 user-change"
                             data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="fa-solid fa-pencil"></i>
                         </a>
-                        <a href="" class="w-full mx-1 bg-slate-700 p-3 rounded-lg text-white hover:bg-red-500 delete-user"
+                        <a href="" class="w-full mx-1 bg-sky-700 p-3 rounded-lg text-white hover:bg-red-500 delete-user"
                             data-id="${user._id}" data-name="${user.name}" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
                             <i class="fa-solid fa-trash"></i>
                         </a>
