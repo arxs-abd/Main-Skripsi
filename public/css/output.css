@@ -4545,6 +4545,11 @@ textarea.form-control.is-invalid {
   color: rgb(12 74 110 / var(--tw-text-opacity));
 }
 
+.text-sky-100 {
+  --tw-text-opacity: 1;
+  color: rgb(224 242 254 / var(--tw-text-opacity));
+}
+
 .opacity-50 {
   opacity: 0.5;
 }
