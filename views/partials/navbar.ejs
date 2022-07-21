@@ -1,18 +1,28 @@
 <header
-    class="bg-sky-900 top-0 left-0 w-full flex items-center p-2 backdrop-filter backdrop-blur-lg bg-opacity-90 border-b border-sky-800 sticky">
+    class="bg-sky-900 top-0 left-0 w-full flex items-center p-1 backdrop-filter backdrop-blur-lg bg-opacity-90 border-b border-sky-800 sticky">
     <div class="container">
         <div class="flex items-center justify-between">
-            <div class="px-4">
-                <a href="/" class="block font-bold lg:text-xl text-white py-4">Plagiarsm Checker</a>
+            <div class="w-full">
+                <a href="/" class="block font-bold text-xl text-white py-4">Plagiarsm Checker</a>
             </div>
-            <nav class="text-white font-normal">
-                <ul class="flex">
-                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:rounded-xl"><a href="/">Home</a></li>
-                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:rounded-xl "><a href="#about-me">About Me</a>
-                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:rounded-xl "><a href="#about-me">How It
+            <button id="hamburger" name="hamburger" type="button" class="absolute right-10 block lg:hidden">
+                <span class="hamburger-line origin-top-left transition duration-300 ease-in-out"></span>
+                <span class="hamburger-line transition duration-300 ease-in-out"></span>
+                <span class="hamburger-line origin-bottom-left transition duration-300 ease-in-out"></span>
+            </button>
+            <nav id="nav-menu"
+                class="absolute right-4 hidden top-full w-full max-w-[250px] rounded-lg bg-white py-5 shadow-lg -mt-3 lg:static lg:block lg:max-w-full lg:rounded-none lg:bg-transparent lg:shadow-none">
+                <ul class="lg:flex lg:justify-end lg:text-white">
+                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:text-white hover:rounded-xl"><a href="/">Home</a>
+                    </li>
+                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:text-white hover:rounded-xl "><a
+                            href="#about-me">About Me</a>
+                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:text-white hover:rounded-xl "><a
+                            href="#about-me">How It
                             Works</a>
                     </li>
-                    <li class="mx-1 lg:mx-3 py-2 px-4 bg-sky-900  text-white rounded-xl hover:bg-sky-700">
+                    <li
+                        class="mx-1 lg:mx-3 py-2 px-4 bg-sky-900  text-white rounded-xl hover:bg-sky-700 hover:text-white">
                         <% if (typeof user !== 'undefined') { %>
                         <a href="/logout">Logout</a>
                         <% } else {%>
@@ -21,6 +31,29 @@
                     </li>
                 </ul>
             </nav>
+            <!-- <nav class="text-white font-normal">
+                <ul class="lg:flex hidden">
+                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:rounded-xl"><a href="/">Home</a></li>
+                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:rounded-xl "><a href="#about-me">About Me</a>
+                    <li class="mx-1 lg:mx-3 p-2 hover:bg-sky-700 hover:rounded-xl "><a href="#about-me">How It
+                            Works</a>
+                    </li>
+                    <li class="mx-1 lg:mx-3 py-2 px-4 bg-sky-900  text-white rounded-xl hover:bg-sky-700">
+                        < if (typeof user !== 'undefined') { %>
+                        <a href="/logout">Logout</a>
+                        < } else {%>
+                        <a href="/login">Login</a>
+                        < }%>
+                    </li>
+                </ul>
+            </nav> -->
         </div>
     </div>
 </header>
+
+<script>
+    document.querySelector('#hamburger').addEventListener('click', function () {
+        this.classList.toggle('hamburger-active')
+        document.querySelector('#nav-menu').classList.toggle('hidden')
+    })
+</script>
