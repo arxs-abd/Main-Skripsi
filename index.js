@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const session = require('express-session')
 const ejsLayout = require('express-ejs-layouts')
@@ -27,6 +28,10 @@ app.use(session({
 }))
 app.use(methodeOverride('_method'))
 app.use(flash())
+
+if (process.env.MODE === 'maintenence') {
+    
+}
 
 app.use(activityRouter)
 
