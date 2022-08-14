@@ -1,4 +1,5 @@
 const {User, verifyPassword} = require('../models/user')
+const jwt = require('jsonwebtoken')
 require('../utils/db')
 
 const loginView = (req, res) => {
@@ -18,21 +19,22 @@ const loginAuth = async(req, res) => {
         req.session._id = admin._id
         return res.redirect('/admin')
     }
-    const userLog = await User.find({
+    const userLog = await User.findOne({
         uid : nim
     })
+    console.log(userLog)
 
-    if (userLog.length == 0) {
+    if (!userLog) {
         req.flash('errors', 'errors')
     return res.redirect('/login')
     }
     
-    let passwordVerify = await verifyPassword(password, userLog[0].password)
+    let passwordVerify = await verifyPassword(password, userLog.password)
     
     if (passwordVerify) {
-        req.session.userName = userLog[0].name
-        req.session._id = userLog[0]._id
-        req.session.details = userLog[0]
+        req.session.userName = userLog.name
+        req.session._id = userLog._id
+        req.session.details = userLog
         return res.redirect('/')
     }
     req.flash('errors', 'errors')
