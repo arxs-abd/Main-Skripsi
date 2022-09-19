@@ -7,7 +7,7 @@ const {loginView, loginAuth, logout} = require('../controllers/loginController')
 const {admin, addUser, deleteUser, updateUser, updateUserByUser, pagination} = require('../controllers/adminController')
 const {uploadPdf, deletePdf, result, resultNone} = require('../controllers/fileController')
 
-const {toLogin, toAddUser, toUpdateUser, toUpdateUserByUser} = require('../middleware/user')
+const {toLogin, toAddUser, toUpdateUser, toUpdateUserByUser, verifyToken} = require('../middleware/user')
 const {adminVerify} = require('../middleware/admin')
 const { toAddFile } = require('../middleware/file')
 const { fileStorage, fileFilter, fileStorageRes } = require('../config/fileConfig')
@@ -38,7 +38,7 @@ router.delete('/pdf', deletePdf)
 
 router.get('/user', pagination)
 
-// router.use(adminVerify)
+router.use(adminVerify)
 router.get('/admin', admin)
 router.post('/admin-user', toAddUser, addUser)
 router.put('/admin-user', toUpdateUser, updateUser)

@@ -1,3 +1,4 @@
+require('dotenv').config()
 const {User, verifyPassword} = require('../models/user')
 const jwt = require('jsonwebtoken')
 require('../utils/db')
@@ -17,24 +18,27 @@ const loginAuth = async(req, res) => {
         const admin = await User.findOne({uid : '030400'})
         req.session.userName = 'Admin'
         req.session._id = admin._id
+        const token = jwt.sign({data : admin}, process.env.SECRET_KEY)
+        res.cookie('x-access-token', token)
         return res.redirect('/admin')
     }
     const userLog = await User.findOne({
         uid : nim
     })
-    console.log(userLog)
 
     if (!userLog) {
         req.flash('errors', 'errors')
-    return res.redirect('/login')
+         return res.redirect('/login')
     }
     
     let passwordVerify = await verifyPassword(password, userLog.password)
     
     if (passwordVerify) {
-        req.session.userName = userLog.name
-        req.session._id = userLog._id
-        req.session.details = userLog
+        // req.session.userName = userLog.name
+        // req.session._id = userLog._id
+        // req.session.details = userLog
+        const token = jwt.sign({data : userLog}, process.env.SECRET_KEY)
+        res.cookie('x-access-token', token)
         return res.redirect('/')
     }
     req.flash('errors', 'errors')
@@ -43,6 +47,7 @@ const loginAuth = async(req, res) => {
 
 const logout = (req, res) => {
     req.session.destroy(error => {
+        res.clearCookie('x-access-token')
         res.redirect('/login')
     })
 }
