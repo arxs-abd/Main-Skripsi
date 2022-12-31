@@ -1,8 +1,10 @@
+require('dotenv').config()
 const pdfParse = require('pdf-parse')
 const {File, sanitizePdf} = require('../models/files')
 const {promisify} = require('util')
 const fs = require('fs')
 const { User } = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 const allChar = ["-", " ", ""]
 
@@ -14,11 +16,13 @@ const uploadPdf = async (req, res) => {
     const location = `${req.file.destination}/${req.file.filename}`
     const text = (await pdfParse(location)).text
     const result = sanitizePdf(text)
+    const token = req.cookies['x-access-token']
+    const data = jwt.verify(token, process.env.SECRET_KEY)
 
     const newFile = new File({
         name : req.body.title,
         fileName : req.file.filename,
-        uploader : req.session._id,
+        uploader : data.data._id,
         text : result,
     })
 
@@ -47,6 +51,7 @@ const resultNone = async (req, res) => {
     const location = req.files['upload-res']
     const text = (await pdfParse(location)).text
     const resultText = sanitizePdf(text)
+    // console.log(resultText)
     const dataFile = {
         name : req.files['upload-res'].name,
         char : text.length,

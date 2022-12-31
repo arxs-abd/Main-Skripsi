@@ -29,10 +29,6 @@ app.use(session({
 app.use(methodeOverride('_method'))
 app.use(flash())
 
-if (process.env.MODE === 'maintenence') {
-    
-}
-
 app.use(activityRouter)
 
 

@@ -1,3 +1,5 @@
+require('dotenv').config()
+const jwt = require('jsonwebtoken')
 const {check, validationResult} = require('express-validator')
 const {User} = require('../models/user')
 
@@ -66,10 +68,19 @@ const toUpdateUserByUser = [
     }
 ]
 
+const verifyToken = (req, res, next) => {
+    const token = req.cookies['x-access-token']
+    // if (!token) res.redirect('/')
+    console.log(jwt.verify(token, process.env.SECRET_KEY))
+    // console.log({token}) 
+    next()
+}
+
 
 module.exports = {
     toLogin,
     toAddUser,
     toUpdateUser,
-    toUpdateUserByUser
+    toUpdateUserByUser,
+    verifyToken,
 }
