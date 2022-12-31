@@ -89,7 +89,7 @@ const deleteUser = async (req, res) => {
     return res.redirect('/admin')
 }
 
-const pagination = async (req, res) => {
+const paginationUser = async (req, res) => {
     const {limit : lim, pages} = req.query
     const {limit, offset} = getPagination(pages, lim)
 
@@ -100,7 +100,20 @@ const pagination = async (req, res) => {
         totalPages : data.totalPages,
         currentPage : data.page - 1,
     }
-    res.send(result)
+    return res.send(result)
+}
+
+const paginationFile = async (req, res) => {
+    const {limit : lim, pages} = req.query
+    const {limit, offset} = getPagination(pages, lim)
+    const data = await File.paginate({}, {offset, limit})
+    const result = {
+        totalItems : data.totalDocs,
+        data : data.docs,
+        totalPages : data.totalPages,
+        currentPage : data.page - 1,
+    }
+    return res.send(result)
 }
 
 const getPagination = (page, size) => {
@@ -116,5 +129,6 @@ module.exports = {
     updateUser,
     deleteUser,
     updateUserByUser,
-    pagination
+    paginationUser,
+    paginationFile
 }

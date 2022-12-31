@@ -16,7 +16,7 @@
     const modalUser = document.querySelector('#modal-user')
     const userModalButton = document.querySelector('#modal-sub-user')
     const formUserModal = document.querySelector('#form-user')
-
+    const modalTitle = document.querySelector('#exampleModalScrollableLabel')
     // const deleteUser = document.querySelectorAll('.delete-user')
     const idDeleteUser = document.querySelector('#del-user-id')
     const nameDeleteUser = document.querySelector('#del-user-name')
@@ -50,6 +50,7 @@
         userIdNim.value = ''
         userIdName.value = ''
         userIdPass.disabled = false
+        modalTitle.textContent = 'Add User'
         userModalButton.textContent = 'Add User'
     })
 
@@ -128,6 +129,7 @@
                 userIdNim.value = user.getAttribute('data-uid')
                 userIdPass.disabled = true
                 userModalButton.textContent = 'Update User'
+                modalTitle.textContent = 'Update User'
             })
         })
 

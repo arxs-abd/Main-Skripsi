@@ -1,5 +1,5 @@
 require('dotenv').config()
-const {User, verifyPassword} = require('../models/user')
+const {User, verifyPassword, createPassword} = require('../models/user')
 const jwt = require('jsonwebtoken')
 require('../utils/db')
 
@@ -15,7 +15,7 @@ const loginAuth = async(req, res) => {
     const password = req.body.password
 
     if (nim === '030400' && password == '1234') {
-        const admin = await User.findOne({uid : '030400'})
+        let admin = await User.findOne({uid : '030400'})
         req.session.userName = 'Admin'
         req.session._id = admin._id
         const token = jwt.sign({data : admin}, process.env.SECRET_KEY)
@@ -34,9 +34,6 @@ const loginAuth = async(req, res) => {
     let passwordVerify = await verifyPassword(password, userLog.password)
     
     if (passwordVerify) {
-        // req.session.userName = userLog.name
-        // req.session._id = userLog._id
-        // req.session.details = userLog
         const token = jwt.sign({data : userLog}, process.env.SECRET_KEY)
         res.cookie('x-access-token', token)
         return res.redirect('/')
