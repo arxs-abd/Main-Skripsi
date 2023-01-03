@@ -16,6 +16,15 @@ const loginAuth = async(req, res) => {
 
     if (nim === '030400' && password == '1234') {
         let admin = await User.findOne({uid : '030400'})
+        if (!admin) {
+            const newAdmin = new User({
+                uid : '030400',
+                name : 'admin',
+                password : createPassword('1234')
+            })
+            await newAdmin.save()
+            admin = await User.findOne({uid : '030400'})
+        }
         req.session.userName = 'Admin'
         req.session._id = admin._id
         const token = jwt.sign({data : admin}, process.env.SECRET_KEY)

@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const URI = process.env.MONGODB_URL
 const DB = 'latihan'
 
-mongoose.connect(`${URI}/${DB}`, {
+mongoose.connect(URI, {
+// mongoose.connect(`${URI}/${DB}`, {
     useNewUrlParser : true,
     useUnifiedTopology : true,
 })
