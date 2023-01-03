@@ -26,7 +26,7 @@ const uploadPdf = async (req, res) => {
         text : result,
     })
 
-    newFile.save()
+    await newFile.save()
     req.flash('success-add-file', 'File Has Been Added')
     if (req.session.userName != 'Admin') return res.redirect('/')
     return res.redirect('/admin')
