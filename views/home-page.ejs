@@ -3,7 +3,7 @@
 <% if (typeof user !== 'undefined') { if (user !== 'Admin') { %>
 
 <div class="container flex flex-wrap justify-between">
-    <div class="w-full bg-sky-800 lg:w-[49%]  mt-5 rounded-md p-4">
+    <div class="w-full bg-sky-800 lg:w-[49%]  mt-5 rounded-md p-4 overflow-y-auto">
         <div class="flex flex-wrap flex-row items-center justify-between">
             <h2 class="font-semibold text-xl mb-3 text-white">All Files</h2>
             <button type="button" class="w-1/2 bg-sky-700 py-2 rounded-lg text-white hover:bg-sky-600"
@@ -41,20 +41,57 @@
                     <th scope="col" class="text-sm font-medium px-6 py-4 text-left">
                         Title
                     </th>
-                    <th scope="col" class="text-sm font-medium px-6 py-4 text-left">
+                    <!-- <th scope="col" class="text-sm font-medium px-6 py-4 text-left">
                         Uploader
-                    </th>
+                    </th> -->
                     <th scope="col" class="text-sm font-medium px-6 py-4 text-left">
                         Action
                     </th>
                 </tr>
             </thead>
-            <tbody>
-                <% file.forEach((f, i) => { %>
-                <%- include('partials/table-file-row', { f : f, i : i }) %>
-                <% }) %>
+            <tbody id="table-file">
+                <!-- <%# file.forEach((f, i) => { %> -->
+                <!-- <%# include('partials/table-file-row', { f : f, i : i }) %> -->
+                <!-- <# }) %> -->
             </tbody>
         </table>
+        <div class="paginaton mt-3 min-w-full">
+            <div class="flex justify-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="flex list-style-none gap-1">
+                        <li class="page-item-file"><a
+                                class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 text-white hover:text-white hover:bg-sky-900 focus:shadow-none"
+                                href="#" aria-label="First" data-page="false" data-click="false">
+                                <span aria-hidden="true">First</span>
+                            </a></li>
+                        <li class="page-item-file"><a
+                                class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 text-white hover:text-white hover:bg-sky-900 focus:shadow-none"
+                                href="#" aria-label="Previous" data-page="false" data-click="false">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a></li>
+                        <li class="page-item-file"><a
+                                class="page-link relative block py-1.5 px-3 rounded border-0 bg-sky-900 outline-none transition-all duration-300 text-white hover:text-white hover:bg-sky-900 focus:shadow-none"
+                                data-click="false" href="#">1</a></li>
+                        <li class="page-item-file"><a
+                                class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 text-white hover:text-white hover:bg-sky-900 focus:shadow-none"
+                                data-click="false" href="#">2</a></li>
+                        <li class="page-item-file"><a
+                                class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 text-white hover:text-white hover:bg-sky-900 focus:shadow-none"
+                                data-click="false" href="#">3</a></li>
+                        <li class="page-item-file"><a
+                                class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 text-white hover:text-white hover:bg-sky-900 focus:shadow-none"
+                                href="#" aria-label="Next" data-click="false">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a></li>
+                        <li class="page-item-file"><a
+                                class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 text-white hover:text-white hover:bg-sky-900 focus:shadow-none"
+                                href="#" aria-label="Last" data-page="false" data-click="false">
+                                <span aria-hidden="true">Last</span>
+                            </a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 
     <div class="w-full h-max-[40px]  bg-sky-800 lg:w-[49%]  mt-5 rounded-md p-4">
@@ -178,20 +215,161 @@
 </div>
 
 <script>
-    const deleteFile = document.querySelectorAll('.delete-file')
     const idDeleteFile = document.querySelector('#del-file-id')
     const nameDeleteFile = document.querySelector('#del-file-title')
     const deleteTextFile = document.querySelector('#text-delete-file')
 
-    deleteFile.forEach(file => {
-        file.addEventListener('click', e => {
-            e.preventDefault()
-            idDeleteFile.value = file.getAttribute('data-id')
-            nameDeleteFile.value = file.getAttribute('data-name')
-            deleteTextFile.textContent =
-                `Are You Sure Want Delete File With Title ${file.getAttribute('data-name')} ?`
+    const tableFile = document.querySelector('#table-file')
+    const navigationFile = document.querySelectorAll('.page-item-file')
+    let currentPageFile = 0
+    let totalPageFile = 0
+    const limitFile = 5
+    updateFileTable(currentPageFile)
+
+    async function updateFileTable(page) {
+        const result = await getApi(`/file?limit=${limitFile}&pages=${page}`)
+        // return console.log(result)
+        const data = result.data
+        currentPageFile = result.currentPage
+        totalPageFile = result.totalPages
+        tableFile.innerHTML = ''
+        let number = (currentPageFile * limitFile) + 1
+        for (const file of data) {
+            tableFile.innerHTML += `
+            <tr class="border-b border-sky-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${number}</td>
+                <td class="text-sm font-light px-6 py-4 whitespace-nowrap">${file.name}</td>
+                <td class="text-sm font-light px-6 py-4 whitespace-nowrap">
+                    <a href="docs/${file.fileName}" target="_blank"
+                        class="w-full mx-1 bg-sky-700 p-3 rounded-lg text-white hover:bg-green-500">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a href="" class="w-full mx-1 bg-sky-700 p-3 rounded-lg text-white hover:bg-red-500 delete-file"
+                        data-id="${file._id}" data-name="${file.name}" data-bs-toggle="modal" data-bs-target="#deleteFileModal">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            `
+            number++
+        }
+        const deleteFile = document.querySelectorAll('.delete-file')
+        deleteFile.forEach(file => {
+            file.addEventListener('click', e => {
+                e.preventDefault()
+                idDeleteFile.value = file.getAttribute('data-id')
+                nameDeleteFile.value = file.getAttribute('data-name')
+                deleteTextFile.textContent =
+                    `Are You Sure Want Delete File With Title ${file.getAttribute('data-name')} ?`
+            })
         })
-    })
+
+        let newCurrentPage = getNumberPage(currentPageFile, totalPageFile)
+        for (const nav of navigationFile) {
+            if (nav.children[0].ariaLabel === 'Previous') {
+                nav.children[0].dataset.page = (currentPageFile - 1)
+                if (nav.children[0].dataset.click === 'false') {
+                    pagingButtonListener(nav.children[0], 'prev')
+                }
+            } else if (nav.children[0].ariaLabel === 'Next') {
+                nav.children[0].dataset.page = (currentPageFile + 1)
+                if (nav.children[0].dataset.click === 'false') {
+                    pagingButtonListener(nav.children[0], 'next')
+                }
+            } else if (nav.children[0].ariaLabel === 'First') {
+                if (nav.children[0].dataset.click === 'false') {
+                    nav.addEventListener('click', e => {
+                        if (currentPageFile === 0) return e.preventDefault()
+                        updatePage(e, 1)
+                    })
+                    nav.children[0].dataset.click = 'true'
+                }
+            } else if (nav.children[0].ariaLabel === 'Last') {
+                if (nav.children[0].dataset.click === 'false') {
+                    nav.addEventListener('click', e => {
+                        if (currentPageFile === totalPageFile - 1) return e.preventDefault()
+                        updatePage(e, totalPageFile)
+                    })
+                    nav.children[0].dataset.click = 'true'
+                }
+            } else {
+                nav.children[0].textContent = newCurrentPage
+                if (currentPageFile + 1 === newCurrentPage) {
+                    removeIfExist(nav.children[0], 'bg-transparent')
+                    addIfNotExist(nav.children[0], 'bg-sky-900')
+                } else {
+                    removeIfExist(nav.children[0], 'bg-sky-900')
+                    addIfNotExist(nav.children[0], 'bg-transparent')
+                }
+
+                if (newCurrentPage > totalPageFile) nav.style.display = 'none'
+                // console.log(nav.children[0].dataset.click)
+                if (nav.children[0].dataset.click === 'false') {
+                    pagingButtonListener(nav.children[0])
+                }
+                newCurrentPage++
+            }
+
+        }
+
+    }
+
+    function pagingButtonListener(nav, option = '') {
+        nav.addEventListener('click', (e) => {
+            e.preventDefault()
+            if (option === 'next')
+                if (currentPageFile === (totalPageFile - 1)) return
+            if (option === 'prev')
+                if (currentPageFile === 0) return
+            updatePage(e, (Number(nav.dataset.page) + 1) || Number(nav.textContent))
+        })
+        nav.dataset.click = 'true'
+    }
+
+    function updatePage(e, page) {
+        e.preventDefault()
+        updateFileTable(page - 1)
+    }
+
+    async function getApi(url) {
+        const response = await fetch(url)
+        const result = await response.json()
+        return result
+    }
+
+    function getNumberPage(currentPage, totalPage) {
+        if (currentPage == 0) {
+            return currentPage + 1
+        }
+        if (currentPage + 1 == totalPage && totalPage > 2) {
+            return currentPage - 1
+        }
+        return currentPage
+    }
+
+    function prevent(e) {
+        e.preventDefault()
+    }
+
+    function removeIfExist(removeItem, removeClass) {
+        if (removeItem.classList.contains(removeClass)) removeItem.classList.remove(removeClass)
+    }
+
+    function addIfNotExist(addItem, addClass) {
+        if (!addItem.classList.contains(addClass)) addItem.classList.add(addClass)
+    }
+
+
+
+    // deleteFile.forEach(file => {
+    //     file.addEventListener('click', e => {
+    //         e.preventDefault()
+    //         idDeleteFile.value = file.getAttribute('data-id')
+    //         nameDeleteFile.value = file.getAttribute('data-name')
+    //         deleteTextFile.textContent =
+    //             `Are You Sure Want Delete File With Title ${file.getAttribute('data-name')} ?`
+    //     })
+    // })
 </script>
 
 <% } } %>

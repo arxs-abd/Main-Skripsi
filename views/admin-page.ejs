@@ -87,6 +87,108 @@
     const limit = 5
     updateUserTable(currentPage)
 
+    // File Tabel
+    const tableFile = document.querySelector('#table-file')
+    const navigationFile = document.querySelectorAll('.page-item-file')
+    let currentPageFile = 0
+    let totalPageFile = 0
+    const limitFile = 5
+    updateFileTable(currentPageFile)
+
+    async function updateFileTable(page) {
+        const result = await getApi(`/file?limit=${limitFile}&pages=${page}`)
+        const users = await getApi('/all-user')
+        // return console.log(user)
+        const data = result.data
+        currentPageFile = result.currentPage
+        totalPageFile = result.totalPages
+        tableFile.innerHTML = ''
+        let number = (currentPageFile * limitFile) + 1
+        for (const file of data) {
+            const uploader = users.find(function (user) {
+                return user._id === file.uploader
+            })
+            // console.log(uploader)
+            tableFile.innerHTML += `
+            <tr class="border-b border-sky-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${number}</td>
+                <td class="text-sm font-light px-6 py-4 whitespace-nowrap">${file.name}</td>
+                <td class="text-sm font-light px-6 py-4 whitespace-nowrap">${uploader.name}</td>
+                <td class="text-sm font-light px-6 py-4 whitespace-nowrap">
+                    <a href="docs/${file.fileName}" target="_blank"
+                        class="w-full mx-1 bg-sky-700 p-3 rounded-lg text-white hover:bg-green-500">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a href="" class="w-full mx-1 bg-sky-700 p-3 rounded-lg text-white hover:bg-red-500 delete-file"
+                        data-id="${file._id}" data-name="${file.name}" data-bs-toggle="modal" data-bs-target="#deleteFileModal">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            `
+            number++
+        }
+        const deleteFile = document.querySelectorAll('.delete-file')
+        deleteFile.forEach(file => {
+            file.addEventListener('click', e => {
+                e.preventDefault()
+                idDeleteFile.value = file.getAttribute('data-id')
+                nameDeleteFile.value = file.getAttribute('data-name')
+                deleteTextFile.textContent =
+                    `Are You Sure Want Delete File With Title ${file.getAttribute('data-name')} ?`
+            })
+        })
+
+        let newCurrentPage = getNumberPage(currentPageFile, totalPageFile)
+        for (const nav of navigationFile) {
+            if (nav.children[0].ariaLabel === 'Previous') {
+                nav.children[0].dataset.page = (currentPageFile - 1)
+                if (nav.children[0].dataset.click === 'false') {
+                    pagingButtonListenerFile(nav.children[0], 'prev')
+                }
+            } else if (nav.children[0].ariaLabel === 'Next') {
+                nav.children[0].dataset.page = (currentPageFile + 1)
+                if (nav.children[0].dataset.click === 'false') {
+                    pagingButtonListenerFile(nav.children[0], 'next')
+                }
+            } else if (nav.children[0].ariaLabel === 'First') {
+                if (nav.children[0].dataset.click === 'false') {
+                    nav.addEventListener('click', e => {
+                        if (currentPageFile === 0) return e.preventDefault()
+                        updatePage(e, 1)
+                    })
+                    nav.children[0].dataset.click = 'true'
+                }
+            } else if (nav.children[0].ariaLabel === 'Last') {
+                if (nav.children[0].dataset.click === 'false') {
+                    nav.addEventListener('click', e => {
+                        if (currentPageFile === totalPageFile - 1) return e.preventDefault()
+                        updatePage(e, totalPageFile)
+                    })
+                    nav.children[0].dataset.click = 'true'
+                }
+            } else {
+                nav.children[0].textContent = newCurrentPage
+                if (currentPageFile + 1 === newCurrentPage) {
+                    removeIfExist(nav.children[0], 'bg-transparent')
+                    addIfNotExist(nav.children[0], 'bg-sky-900')
+                } else {
+                    removeIfExist(nav.children[0], 'bg-sky-900')
+                    addIfNotExist(nav.children[0], 'bg-transparent')
+                }
+
+                if (newCurrentPage > totalPageFile) nav.style.display = 'none'
+                // console.log(nav.children[0].dataset.click)
+                if (nav.children[0].dataset.click === 'false') {
+                    pagingButtonListenerFile(nav.children[0])
+                }
+                newCurrentPage++
+            }
+
+        }
+
+    }
+
     async function updateUserTable(page) {
         const result = await getApi(`/user?limit=${limit}&pages=${page}`)
         const data = result.data
@@ -203,15 +305,28 @@
                 if (currentPage === (totalPage - 1)) return
             if (option === 'prev')
                 if (currentPage === 0) return
-            updatePage(e, (Number(nav.dataset.page) + 1) || Number(nav.textContent))
+            updatePage(e, (Number(nav.dataset.page) + 1) || Number(nav.textContent), 'user')
         })
         nav.dataset.click = 'true'
     }
 
-    function updatePage(e, page) {
+    function pagingButtonListenerFile(nav, option = '') {
+        nav.addEventListener('click', (e) => {
+            e.preventDefault()
+            if (option === 'next')
+                if (currentPageFile === (totalPageFile - 1)) return
+            if (option === 'prev')
+                if (currentPageFile === 0) return
+            updatePage(e, (Number(nav.dataset.page) + 1) || Number(nav.textContent), 'file')
+        })
+        nav.dataset.click = 'true'
+    }
+
+    function updatePage(e, page, table) {
         e.preventDefault()
         console.log(page - 1)
-        updateUserTable(page - 1)
+        if (table === 'user') updateUserTable(page - 1)
+        else if (table === 'file') updateFileTable(page - 1)
     }
 
     async function getApi(url) {

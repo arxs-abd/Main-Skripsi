@@ -1,4 +1,5 @@
 require('../utils/db')
+const jwt = require('jsonwebtoken')
 const {User, createPassword} = require('../models/user')
 const {File} = require('../models/files')
 
@@ -103,10 +104,23 @@ const paginationUser = async (req, res) => {
     return res.send(result)
 }
 
+const allUser = async (req, res) => {
+    const allUser = await User.find({}, {_id : 1, name : 1})
+
+    return res.send(allUser)
+}
+
 const paginationFile = async (req, res) => {
+    let data
     const {limit : lim, pages} = req.query
     const {limit, offset} = getPagination(pages, lim)
-    const data = await File.paginate({}, {offset, limit})
+
+    const token = req.cookies['x-access-token']
+    const dataUser = jwt.verify(token, process.env.SECRET_KEY)
+
+    if (dataUser.data._id === '030400') data = await File.paginate({}, {offset, limit})
+    else data = await File.paginate({uploader : dataUser.data._id}, {offset, limit})
+
     const result = {
         totalItems : data.totalDocs,
         data : data.docs,
@@ -130,5 +144,6 @@ module.exports = {
     deleteUser,
     updateUserByUser,
     paginationUser,
-    paginationFile
+    paginationFile,
+    allUser
 }

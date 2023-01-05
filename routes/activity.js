@@ -4,7 +4,7 @@ const fileUpload = require('express-fileupload')
 
 const {home} = require('../controllers/homeController')
 const {loginView, loginAuth, logout} = require('../controllers/loginController')
-const {admin, addUser, deleteUser, updateUser, updateUserByUser, pagination, paginationUser, paginationFile} = require('../controllers/adminController')
+const {admin, addUser, deleteUser, updateUser, updateUserByUser, pagination, paginationUser, paginationFile, allUser} = require('../controllers/adminController')
 const {uploadPdf, deletePdf, result, resultNone} = require('../controllers/fileController')
 
 const {toLogin, toAddUser, toUpdateUser, toUpdateUserByUser, verifyToken} = require('../middleware/user')
@@ -38,6 +38,7 @@ router.delete('/pdf', deletePdf)
 
 router.get('/user', paginationUser)
 router.get('/file', paginationFile)
+router.get('/all-user', allUser)
 
 router.use(adminVerify)
 router.get('/admin', admin)
